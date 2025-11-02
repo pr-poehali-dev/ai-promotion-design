@@ -291,46 +291,184 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-4xl font-bold text-center mb-12">Научные исследования</h2>
           
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <Card className="animate-fade-in">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Icon name="TrendingUp" className="text-primary" size={24} />
+                  Рост точности модели
+                </CardTitle>
+                <CardDescription>Прогресс за последние 3 года</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { year: '2022', accuracy: 87, color: 'bg-muted' },
+                    { year: '2023', accuracy: 94, color: 'bg-secondary' },
+                    { year: '2024', accuracy: 99.7, color: 'bg-primary' }
+                  ].map((item, i) => (
+                    <div key={i} className="space-y-2 animate-fade-in" style={{ animationDelay: `${i * 0.2}s` }}>
+                      <div className="flex justify-between text-sm font-medium">
+                        <span>{item.year}</span>
+                        <span className="text-primary">{item.accuracy}%</span>
+                      </div>
+                      <div className="h-3 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${item.color} transition-all duration-1000 ease-out`}
+                          style={{ width: `${item.accuracy}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Icon name="BarChart3" className="text-primary" size={24} />
+                  Объём обработанных данных
+                </CardTitle>
+                <CardDescription>Петабайты в год</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-end justify-around gap-4">
+                  {[
+                    { year: '2022', value: 45, height: 45 },
+                    { year: '2023', value: 120, height: 75 },
+                    { year: '2024', value: 280, height: 100 }
+                  ].map((item, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-2 animate-scale-in" style={{ animationDelay: `${i * 0.15}s` }}>
+                      <div className="text-sm font-bold text-primary">{item.value} ПБ</div>
+                      <div 
+                        className="w-full bg-gradient-to-t from-primary to-secondary rounded-t-lg transition-all duration-1000"
+                        style={{ height: `${item.height}%` }}
+                      />
+                      <div className="text-xs text-muted-foreground font-medium">{item.year}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-12 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Icon name="Activity" className="text-primary" size={24} />
+                Производительность по задачам
+              </CardTitle>
+              <CardDescription>Сравнение с традиционными методами</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {[
+                  { task: 'Распознавание изображений', aiScore: 98, traditionalScore: 76 },
+                  { task: 'Обработка естественного языка', aiScore: 95, traditionalScore: 68 },
+                  { task: 'Прогнозирование временных рядов', aiScore: 91, traditionalScore: 72 },
+                  { task: 'Классификация данных', aiScore: 97, traditionalScore: 81 }
+                ].map((item, i) => (
+                  <div key={i} className="space-y-2 animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                    <div className="flex justify-between text-sm font-medium">
+                      <span>{item.task}</span>
+                      <div className="flex gap-4">
+                        <span className="text-primary">AI: {item.aiScore}%</span>
+                        <span className="text-muted-foreground">Традиц.: {item.traditionalScore}%</span>
+                      </div>
+                    </div>
+                    <div className="relative h-6">
+                      <div className="absolute inset-0 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-muted-foreground/30 transition-all duration-1000"
+                          style={{ width: `${item.traditionalScore}%` }}
+                        />
+                      </div>
+                      <div className="absolute inset-0 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000"
+                          style={{ width: `${item.aiScore}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {[
+              { label: 'Публикаций', value: '147', icon: 'FileText', trend: '+23%' },
+              { label: 'Цитирований', value: '4.2K', icon: 'Quote', trend: '+156%' },
+              { label: 'Патентов', value: '38', icon: 'Award', trend: '+12' }
+            ].map((stat, i) => (
+              <Card key={i} className="text-center animate-scale-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                <CardContent className="pt-6">
+                  <Icon name={stat.icon as any} className="mx-auto text-primary mb-3" size={40} />
+                  <div className="text-4xl font-bold mb-1">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground mb-2">{stat.label}</div>
+                  <div className="text-xs text-primary font-medium flex items-center justify-center gap-1">
+                    <Icon name="TrendingUp" size={14} />
+                    {stat.trend}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
           <div className="space-y-6 max-w-3xl mx-auto">
+            <h3 className="text-2xl font-bold text-center mb-8">Ключевые публикации</h3>
             {[
               {
                 title: 'Архитектура глубоких нейронных сетей',
                 journal: 'Nature Machine Intelligence',
                 year: '2024',
-                citations: '1,247'
+                citations: '1,247',
+                impact: 9.3
               },
               {
                 title: 'Методы оптимизации обучения на больших данных',
                 journal: 'Science Advances',
                 year: '2024',
-                citations: '892'
+                citations: '892',
+                impact: 8.7
               },
               {
                 title: 'Интерпретируемость решений нейросетей',
                 journal: 'IEEE Transactions on AI',
                 year: '2023',
-                citations: '2,134'
+                citations: '2,134',
+                impact: 9.8
               }
             ].map((item, i) => (
-              <Card key={i} className="hover:shadow-md transition-shadow animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+              <Card key={i} className="hover:shadow-lg transition-all duration-300 animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
                 <CardHeader>
-                  <CardTitle className="text-xl">{item.title}</CardTitle>
-                  <CardDescription>
-                    <div className="flex flex-wrap gap-4 mt-2">
-                      <span className="flex items-center gap-1">
-                        <Icon name="BookOpen" size={16} />
-                        {item.journal}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Icon name="Calendar" size={16} />
-                        {item.year}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Icon name="Quote" size={16} />
-                        {item.citations} цитирований
-                      </span>
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-2">{item.title}</CardTitle>
+                      <CardDescription>
+                        <div className="flex flex-wrap gap-4 mt-2">
+                          <span className="flex items-center gap-1">
+                            <Icon name="BookOpen" size={16} />
+                            {item.journal}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Icon name="Calendar" size={16} />
+                            {item.year}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Icon name="Quote" size={16} />
+                            {item.citations} цитирований
+                          </span>
+                        </div>
+                      </CardDescription>
                     </div>
-                  </CardDescription>
+                    <div className="text-center ml-4">
+                      <div className="text-3xl font-bold text-primary">{item.impact}</div>
+                      <div className="text-xs text-muted-foreground">Impact Factor</div>
+                    </div>
+                  </div>
                 </CardHeader>
               </Card>
             ))}
