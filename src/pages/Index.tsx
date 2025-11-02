@@ -11,6 +11,7 @@ const Index = () => {
   const [aiOutput, setAiOutput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [nodes, setNodes] = useState<Array<{ x: number; y: number; connections: number[] }>>([]);
+  const [hoveredStat, setHoveredStat] = useState<string | null>(null);
 
   useEffect(() => {
     const generatedNodes = Array.from({ length: 20 }, (_, i) => ({
@@ -303,11 +304,17 @@ const Index = () => {
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { year: '2022', accuracy: 87, color: 'bg-muted' },
-                    { year: '2023', accuracy: 94, color: 'bg-secondary' },
-                    { year: '2024', accuracy: 99.7, color: 'bg-primary' }
+                    { year: '2022', accuracy: 87, color: 'bg-muted', tests: '12K', errors: '13%' },
+                    { year: '2023', accuracy: 94, color: 'bg-secondary', tests: '45K', errors: '6%' },
+                    { year: '2024', accuracy: 99.7, color: 'bg-primary', tests: '128K', errors: '0.3%' }
                   ].map((item, i) => (
-                    <div key={i} className="space-y-2 animate-fade-in" style={{ animationDelay: `${i * 0.2}s` }}>
+                    <div 
+                      key={i} 
+                      className="space-y-2 animate-fade-in relative group cursor-pointer" 
+                      style={{ animationDelay: `${i * 0.2}s` }}
+                      onMouseEnter={() => setHoveredStat(`accuracy-${i}`)}
+                      onMouseLeave={() => setHoveredStat(null)}
+                    >
                       <div className="flex justify-between text-sm font-medium">
                         <span>{item.year}</span>
                         <span className="text-primary">{item.accuracy}%</span>
@@ -318,6 +325,25 @@ const Index = () => {
                           style={{ width: `${item.accuracy}%` }}
                         />
                       </div>
+                      {hoveredStat === `accuracy-${i}` && (
+                        <div className="absolute left-0 top-full mt-2 p-3 bg-popover border rounded-lg shadow-lg z-10 text-xs animate-fade-in">
+                          <div className="font-semibold mb-2">Детальная статистика {item.year}</div>
+                          <div className="space-y-1 text-muted-foreground">
+                            <div className="flex justify-between gap-4">
+                              <span>Тестовых образцов:</span>
+                              <span className="font-medium text-foreground">{item.tests}</span>
+                            </div>
+                            <div className="flex justify-between gap-4">
+                              <span>Частота ошибок:</span>
+                              <span className="font-medium text-foreground">{item.errors}</span>
+                            </div>
+                            <div className="flex justify-between gap-4">
+                              <span>Точность:</span>
+                              <span className="font-medium text-primary">{item.accuracy}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -335,17 +361,42 @@ const Index = () => {
               <CardContent>
                 <div className="h-64 flex items-end justify-around gap-4">
                   {[
-                    { year: '2022', value: 45, height: 45 },
-                    { year: '2023', value: 120, height: 75 },
-                    { year: '2024', value: 280, height: 100 }
+                    { year: '2022', value: 45, height: 45, sources: '234', processing: '1.2M/ч' },
+                    { year: '2023', value: 120, height: 75, sources: '891', processing: '4.8M/ч' },
+                    { year: '2024', value: 280, height: 100, sources: '2.1K', processing: '12M/ч' }
                   ].map((item, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-2 animate-scale-in" style={{ animationDelay: `${i * 0.15}s` }}>
+                    <div 
+                      key={i} 
+                      className="flex-1 flex flex-col items-center gap-2 animate-scale-in relative group cursor-pointer" 
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                      onMouseEnter={() => setHoveredStat(`data-${i}`)}
+                      onMouseLeave={() => setHoveredStat(null)}
+                    >
                       <div className="text-sm font-bold text-primary">{item.value} ПБ</div>
                       <div 
                         className="w-full bg-gradient-to-t from-primary to-secondary rounded-t-lg transition-all duration-1000"
                         style={{ height: `${item.height}%` }}
                       />
                       <div className="text-xs text-muted-foreground font-medium">{item.year}</div>
+                      {hoveredStat === `data-${i}` && (
+                        <div className="absolute bottom-full mb-2 p-3 bg-popover border rounded-lg shadow-lg z-10 text-xs whitespace-nowrap animate-fade-in">
+                          <div className="font-semibold mb-2">{item.year} год</div>
+                          <div className="space-y-1 text-muted-foreground">
+                            <div className="flex justify-between gap-4">
+                              <span>Объём данных:</span>
+                              <span className="font-medium text-primary">{item.value} ПБ</span>
+                            </div>
+                            <div className="flex justify-between gap-4">
+                              <span>Источников:</span>
+                              <span className="font-medium text-foreground">{item.sources}</span>
+                            </div>
+                            <div className="flex justify-between gap-4">
+                              <span>Скорость обработки:</span>
+                              <span className="font-medium text-foreground">{item.processing}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -364,12 +415,18 @@ const Index = () => {
             <CardContent>
               <div className="space-y-6">
                 {[
-                  { task: 'Распознавание изображений', aiScore: 98, traditionalScore: 76 },
-                  { task: 'Обработка естественного языка', aiScore: 95, traditionalScore: 68 },
-                  { task: 'Прогнозирование временных рядов', aiScore: 91, traditionalScore: 72 },
-                  { task: 'Классификация данных', aiScore: 97, traditionalScore: 81 }
+                  { task: 'Распознавание изображений', aiScore: 98, traditionalScore: 76, aiTime: '0.12с', tradTime: '2.4с', improvement: '+22%' },
+                  { task: 'Обработка естественного языка', aiScore: 95, traditionalScore: 68, aiTime: '0.08с', tradTime: '1.8с', improvement: '+27%' },
+                  { task: 'Прогнозирование временных рядов', aiScore: 91, traditionalScore: 72, aiTime: '0.15с', tradTime: '3.1с', improvement: '+19%' },
+                  { task: 'Классификация данных', aiScore: 97, traditionalScore: 81, aiTime: '0.05с', tradTime: '1.2с', improvement: '+16%' }
                 ].map((item, i) => (
-                  <div key={i} className="space-y-2 animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <div 
+                    key={i} 
+                    className="space-y-2 animate-fade-in relative group cursor-pointer" 
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                    onMouseEnter={() => setHoveredStat(`task-${i}`)}
+                    onMouseLeave={() => setHoveredStat(null)}
+                  >
                     <div className="flex justify-between text-sm font-medium">
                       <span>{item.task}</span>
                       <div className="flex gap-4">
@@ -391,6 +448,33 @@ const Index = () => {
                         />
                       </div>
                     </div>
+                    {hoveredStat === `task-${i}` && (
+                      <div className="absolute right-0 top-full mt-2 p-3 bg-popover border rounded-lg shadow-lg z-10 text-xs whitespace-nowrap animate-fade-in">
+                        <div className="font-semibold mb-2">{item.task}</div>
+                        <div className="space-y-1 text-muted-foreground">
+                          <div className="flex justify-between gap-6">
+                            <span>Точность AI:</span>
+                            <span className="font-medium text-primary">{item.aiScore}%</span>
+                          </div>
+                          <div className="flex justify-between gap-6">
+                            <span>Точность традиц.:</span>
+                            <span className="font-medium text-foreground">{item.traditionalScore}%</span>
+                          </div>
+                          <div className="flex justify-between gap-6">
+                            <span>Время AI:</span>
+                            <span className="font-medium text-foreground">{item.aiTime}</span>
+                          </div>
+                          <div className="flex justify-between gap-6">
+                            <span>Время традиц.:</span>
+                            <span className="font-medium text-foreground">{item.tradTime}</span>
+                          </div>
+                          <div className="flex justify-between gap-6 pt-1 border-t">
+                            <span>Улучшение:</span>
+                            <span className="font-medium text-primary">{item.improvement}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -399,11 +483,17 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             {[
-              { label: 'Публикаций', value: '147', icon: 'FileText', trend: '+23%' },
-              { label: 'Цитирований', value: '4.2K', icon: 'Quote', trend: '+156%' },
-              { label: 'Патентов', value: '38', icon: 'Award', trend: '+12' }
+              { label: 'Публикаций', value: '147', icon: 'FileText', trend: '+23%', detail: 'В топ-журналах: 89', period: 'За 2024 год' },
+              { label: 'Цитирований', value: '4.2K', icon: 'Quote', trend: '+156%', detail: 'h-index: 47', period: 'Всего' },
+              { label: 'Патентов', value: '38', icon: 'Award', trend: '+12', detail: 'Активных: 34', period: 'С 2020 года' }
             ].map((stat, i) => (
-              <Card key={i} className="text-center animate-scale-in" style={{ animationDelay: `${i * 0.1}s` }}>
+              <Card 
+                key={i} 
+                className="text-center animate-scale-in relative group cursor-pointer hover:shadow-lg transition-all" 
+                style={{ animationDelay: `${i * 0.1}s` }}
+                onMouseEnter={() => setHoveredStat(`stat-${i}`)}
+                onMouseLeave={() => setHoveredStat(null)}
+              >
                 <CardContent className="pt-6">
                   <Icon name={stat.icon as any} className="mx-auto text-primary mb-3" size={40} />
                   <div className="text-4xl font-bold mb-1">{stat.value}</div>
@@ -412,6 +502,17 @@ const Index = () => {
                     <Icon name="TrendingUp" size={14} />
                     {stat.trend}
                   </div>
+                  {hoveredStat === `stat-${i}` && (
+                    <div className="absolute inset-0 bg-popover/95 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center animate-fade-in p-4">
+                      <div className="text-lg font-bold mb-2">{stat.value}</div>
+                      <div className="text-sm text-muted-foreground mb-3">{stat.label}</div>
+                      <div className="space-y-1 text-xs">
+                        <div className="font-medium">{stat.detail}</div>
+                        <div className="text-muted-foreground">{stat.period}</div>
+                        <div className="text-primary font-medium pt-2">Рост: {stat.trend}</div>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -425,24 +526,39 @@ const Index = () => {
                 journal: 'Nature Machine Intelligence',
                 year: '2024',
                 citations: '1,247',
-                impact: 9.3
+                impact: 9.3,
+                authors: 'Иванов А.С. и др.',
+                quartile: 'Q1',
+                downloads: '12.4K'
               },
               {
                 title: 'Методы оптимизации обучения на больших данных',
                 journal: 'Science Advances',
                 year: '2024',
                 citations: '892',
-                impact: 8.7
+                impact: 8.7,
+                authors: 'Петрова М.В. и др.',
+                quartile: 'Q1',
+                downloads: '8.9K'
               },
               {
                 title: 'Интерпретируемость решений нейросетей',
                 journal: 'IEEE Transactions on AI',
                 year: '2023',
                 citations: '2,134',
-                impact: 9.8
+                impact: 9.8,
+                authors: 'Сидоров Д.К. и др.',
+                quartile: 'Q1',
+                downloads: '18.7K'
               }
             ].map((item, i) => (
-              <Card key={i} className="hover:shadow-lg transition-all duration-300 animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+              <Card 
+                key={i} 
+                className="hover:shadow-lg transition-all duration-300 animate-fade-in cursor-pointer relative group" 
+                style={{ animationDelay: `${i * 0.1}s` }}
+                onMouseEnter={() => setHoveredStat(`paper-${i}`)}
+                onMouseLeave={() => setHoveredStat(null)}
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -470,6 +586,42 @@ const Index = () => {
                     </div>
                   </div>
                 </CardHeader>
+                {hoveredStat === `paper-${i}` && (
+                  <div className="absolute inset-0 bg-popover/95 backdrop-blur-sm rounded-lg p-6 animate-fade-in">
+                    <div className="space-y-3">
+                      <div className="font-bold text-lg">{item.title}</div>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <div className="text-muted-foreground">Авторы</div>
+                          <div className="font-medium">{item.authors}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Квартиль</div>
+                          <div className="font-medium text-primary">{item.quartile}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Цитирований</div>
+                          <div className="font-medium">{item.citations}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Скачиваний</div>
+                          <div className="font-medium">{item.downloads}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Impact Factor</div>
+                          <div className="font-medium text-primary">{item.impact}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Год</div>
+                          <div className="font-medium">{item.year}</div>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t">
+                        <div className="text-muted-foreground text-xs">{item.journal}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </Card>
             ))}
           </div>
